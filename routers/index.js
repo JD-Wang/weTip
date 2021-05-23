@@ -2,8 +2,9 @@
 // https://github.com/ZijianHe/koa-router#readme
 const router = require('koa-router')()
 
-const controllers = require('../controllers/index')
+const { getXml, validXml } = require('../controllers/index')
 
-router.use('/api', controllers.routes(), controllers.allowedMethods())
+router.get('/api/xml', validXml)
+router.post('/api/xml', getXml)
 
 module.exports = router
