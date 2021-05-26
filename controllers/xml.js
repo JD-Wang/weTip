@@ -1,21 +1,21 @@
 const sha1 = require('sha1')
-const { token } = require('../config/wx')
 const WeChat = require('koa-easywechat')
 const TimeNormalizer = require('chi-time-nlp')
 const schedule = require('node-schedule')
-const config = require('../config/wx')
+const config = require('../config/secret')
 const dayjs = require('dayjs')
 const Task = require('../models/task')
 const { qyNotice } = require('./qywx')
+const db = require('../db')
 
 /**
  * 验证
  */
 const validXml = async ( ctx )=>{
     const { signature, echostr, timestamp, nonce } = ctx.query
-    const original = [token, timestamp, nonce].sort().join('')
+    const original = [config.token, timestamp, nonce].sort().join('')
     const combineStr = sha1(original)
-    console.log(echostr, 'echostr')
+    console.log('echostr:', echostr)
     // var data = ''
     // ctx.req.on('data', (chunk) => {
     //     data += chunk
@@ -55,34 +55,26 @@ const getXml = WeChat({
     const { MsgType, Content, FromUserName } = this.message
     if (MsgType === 'text') {
         const normalizer = new TimeNormalizer()
-        const time = normalizer.parse(Content)
+        const runTime = normalizer.parse(Content)
 
-        console.log('识别的时间：', time)
-        if (time) {
-            const date = new Date(time)
+        console.log('识别的时间：', runTime)
+        if (runTime) {
+            const date = new Date(runTime)
             
             // 存入数据库
-            const t = new Task({
+            await db.create({
                 content: Content, //任务内容
-                runTime: time, //浏览次数
+                runTime: runTime, //浏览次数
                 hasNotice: false,
                 user: FromUserName
             })
-            await t.save(function(err, data) {
-                console.log('save: ', err, data)
-                if (err) return
-                // 加入任务队列
-                const job = schedule.scheduleJob(date, function(){
-                    console.log(dayjs().format('【开始通知】： YYYY-MM-DD HH:mm:ss'), data.content)
-                    qyNotice(data.content)
-                    Task.updateOne({ _id: data._id }, { hasNotice: true }, function(err, res) {   
-                        if(err){
-                            console.log('updateOne', err)
-                            return
-                        }  
-                        console.log('成功') 
-                    })
-                })
+            // 加入任务队列
+            const job = schedule.scheduleJob(date, async function () {
+                console.log(dayjs().format('【开始通知】： YYYY-MM-DD HH:mm:ss'), data.content)
+                // 企业千牛消息通知
+                qyNotice(data.content)
+                // 更新数据库
+                await db.update({_id: data._id}, { hasNotice: true })
             })
             
             return this.reply = {

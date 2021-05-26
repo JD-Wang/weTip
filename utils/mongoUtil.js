@@ -1,9 +1,9 @@
-const { dbUrl } = require('../config/db')
+const { dbUrl } = require('../config/secret')
 const mongoose = require('mongoose')
 
 module.exports = {
   connect: function(callback) {
-    mongoose.connect(dbUrl)
+    mongoose.connect(dbUrl, { useNewUrlParser: true, useUnifiedTopology: true })
     var db = mongoose.connection
     db.on('error', console.error.bind(console, '连接错误:'));
     db.once('open', () => {

@@ -1,0 +1,12 @@
+● firewalld.service
+   Loaded: masked (Reason: Unit firewalld.service is masked.)
+   Active: inactive (dead) since Tue 2021-05-25 20:35:45 CST; 4min 51s ago
+ Main PID: 3398872 (code=exited, status=0/SUCCESS)
+
+May 25 15:53:19 VM-0-14-centos systemd[1]: Starting firewalld - dynamic firewall daemon...
+May 25 15:53:19 VM-0-14-centos systemd[1]: Started firewalld - dynamic firewall daemon.
+May 25 15:53:19 VM-0-14-centos firewalld[3398872]: [0;1;39m[0;1;31m[0;1;39mWARNING: AllowZoneDrifting is enabled. This is considered an insecure configuration option. It will be removed in a future release. Please consider disabling it now.[0m
+May 25 15:53:21 VM-0-14-centos firewalld[3398872]: [0;1;39m[0;1;31m[0;1;39mWARNING: ALREADY_ENABLED: '27017:tcp' already in 'public'[0m
+May 25 15:54:20 VM-0-14-centos firewalld[3398872]: [0;1;39m[0;1;31m[0;1;39mWARNING: ALREADY_ENABLED: '27017:tcp' already in 'public'[0m
+May 25 20:35:44 VM-0-14-centos systemd[1]: Stopping firewalld - dynamic firewall daemon...
+May 25 20:35:45 VM-0-14-centos systemd[1]: Stopped firewalld - dynamic firewall daemon.
