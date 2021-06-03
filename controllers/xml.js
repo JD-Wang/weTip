@@ -33,7 +33,7 @@ const validXml = async ( ctx )=>{
     // })
 
     // if(signature === combineStr){//比较
-    ctx.body = echostr //返回echostr
+    ctx.body = echostr || 'success' //返回echostr
     // }else {
     // 	console.log('================== checkSignature err ==================')
     // }
@@ -79,7 +79,7 @@ const getXml = WeChat({
             
             return this.reply = {
                 type: 'text',
-                content: `时间：${time}`
+                content: `时间：${runTime}`
             }
         } else {
             return this.reply = {
